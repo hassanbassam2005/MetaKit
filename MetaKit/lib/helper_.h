@@ -120,11 +120,51 @@ namespace helper_
 	 * @brief Specialization to strip pointer types.
 	 */
 	template<typename T>
-	struct strip_pointer<T*>
+	struct strip_pointer<T*> 
 	{
-		using type = T;
+		using type = typename strip_pointer<T>::type;
 	};
 
+	template<typename T>
+	using strip_pointer_t = typename strip_pointer<T>::type;
+
+	static_assert(is_same_v<strip_pointer_t<int*>,int>);
+
+	template<typename T>
+	struct remove_reference
+	{
+		using type = T;
+		using const_ref = const T;
+	};
+
+	template<typename T>
+	struct remove_reference<T&>
+	{
+		using type = T;
+		using const_ref = const T&;
+	};
+
+	template<typename T>
+	struct remove_reference<T&&>
+	{
+		using type = T;
+		using const_ref = const T&&;
+	};
+
+	template<typename T>
+	using remove_refernce_t = typename remove_reference<T>::type;
+
+	template<typename T>
+	using const_through_ref = typename remove_reference<T>::const_ref;
+
+	template<typename T>
+	using remove_cvrf_t = typename std::remove_cv_t<remove_refernce_t<T>>;
+
+	template<typename T>
+	using Remove_cvrf_t = remove_cvrf_t<T>;
+
+	template<typename T>
+	struct remove_cvref : Remove_cvrf_t<T> {};
 }
 
 #endif

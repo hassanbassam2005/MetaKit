@@ -115,7 +115,7 @@ namespace tup
     template<size_t i, typename Tuple>
     constexpr decltype(auto) get(Tuple&& tuple)
     {
-        return detail::get_impl<i, std::remove_cvref_t<Tuple>>::get(std::forward<Tuple>(tuple));
+        return detail::get_impl<i, Remove_cvrf_t<Tuple>>::get(std::forward<Tuple>(tuple));
     }
 }
 
