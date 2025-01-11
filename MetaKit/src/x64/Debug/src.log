@@ -1,3 +1,4 @@
 ﻿  src.cpp
-C:\Users\think\MegaKit\MegaKit\src\src.cpp(18,28): warning C4101: 'front_list': unreferenced local variable
-  src.vcxproj -> C:\Users\think\MegaKit\MegaKit\x64\Debug\src.exe
+C:\Users\think\Documents\GitHub\MetaKit\MetaKit\src\src.cpp(18,28): warning C4101: 'front_list': unreferenced local variable
+  LINK : C:\Users\think\Documents\GitHub\MetaKit\MetaKit\x64\Debug\src.exe not found or not built by the last incremental link; performing full link
+  src.vcxproj -> C:\Users\think\Documents\GitHub\MetaKit\MetaKit\x64\Debug\src.exe
