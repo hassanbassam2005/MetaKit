@@ -29,13 +29,13 @@ namespace tup
 	tuple(T e1, Ts... e2) -> tuple<std::unwrap_ref_decay_t<T>, std::unwrap_ref_decay_t<Ts>...>;
 
 	template<typename ... elements>
-	auto make_tuple(elements... elem)
+	constexpr auto make_tuple(elements... elem)
 	{
 		return tuple < std::unwrap_ref_decay_t<elements>...> {elem...};
 	}
 
 	namespace detail
-	{	
+	{
 		template<size_t i, typename Tuple>
 		struct get_impl : get_impl<i - 1, pop_front_t<Tuple>> {};
 
@@ -55,10 +55,10 @@ namespace tup
 	* get to get the index of the type of the tuple
 	*
 	*/
-	template<size_t i, typename tuple>
-	constexpr decltype(auto) get(tuple& Tuple)
+	template<size_t i, typename Tuple>
+	constexpr decltype(auto) get(Tuple& tuple)
 	{
-		return detail::get_impl<i, std::remove_cvref_t<tuple>>::get(Tuple);
+		return detail::get_impl<i, std::remove_cvref_t<Tuple>>::get(tuple);
 	}
 }
 

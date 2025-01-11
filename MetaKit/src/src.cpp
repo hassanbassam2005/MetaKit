@@ -19,6 +19,6 @@ int main()
 	std::cout << std::boolalpha << is_same_v<at_t<decltype(list), 1>, at_t<decltype(l), 1>> << "\n";
 	std::cout << is_same_v<front_t<decltype(list)>, front_t<decltype(tupe)>> << "\n";
 	std::cout << tupe.data << "\n";
-	std::cout << get<2>(tupe);
+	std::cout << get<2>(tot);
 	return 0;
 }

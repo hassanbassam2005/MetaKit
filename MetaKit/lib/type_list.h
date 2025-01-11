@@ -189,7 +189,7 @@ struct pop_front;
  * @brief Specialization to pop the first type.
  */
 template <template <typename...> class LIST, typename T0, typename... T1toN>
-struct pop_front<LIST<T0, T1toN...>> : has_type<type_list<T1toN...>> {};
+struct pop_front<LIST<T0, T1toN...>> : has_type<LIST<T1toN...>> {};
 
 /**
  * @brief Alias to pop the first type from a type list.
