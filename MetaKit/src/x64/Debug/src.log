@@ -1,0 +1,3 @@
+﻿  src.cpp
+C:\Users\think\MegaKit\MegaKit\src\src.cpp(18,28): warning C4101: 'front_list': unreferenced local variable
+  src.vcxproj -> C:\Users\think\MegaKit\MegaKit\x64\Debug\src.exe
