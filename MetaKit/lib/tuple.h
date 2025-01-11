@@ -6,11 +6,13 @@
 #include <type_traits>
 #include <functional>
 
-#ifndef TYPE_LIST_H
 #include "type_list.h"
-#endif 
 
+#ifndef HELPER__H
+#include "helper_.h"
+#endif
 
+using namespace helper_;
 
 namespace tup
 {
@@ -29,9 +31,9 @@ namespace tup
 	tuple(T e1, Ts... e2) -> tuple<std::unwrap_ref_decay_t<T>, std::unwrap_ref_decay_t<Ts>...>;
 
 	template<typename ... elements>
-	constexpr auto make_tuple(elements... elem)
+	constexpr auto make_tuple(elements&&... elem)
 	{
-		return tuple < std::unwrap_ref_decay_t<elements>...> {elem...};
+		return tuple < std::unwrap_ref_decay_t<elements>...> {std::forward<elements>(elem)...};
 	}
 
 	namespace detail
@@ -45,7 +47,12 @@ namespace tup
 			template<typename T>
 			constexpr static decltype(auto) get(T& t)
 			{
-				return static_cast<Tuple&>(t).data;
+				constexpr bool is_constant = std::is_const_v<T>;
+
+				if constexpr (is_constant)
+					return static_cast<const Tuple&>(t).data;
+				else
+					return static_cast<Tuple&>(t).data;
 			}
 		};	
 	}
@@ -56,9 +63,9 @@ namespace tup
 	*
 	*/
 	template<size_t i, typename Tuple>
-	constexpr decltype(auto) get(Tuple& tuple)
+	constexpr decltype(auto) get(Tuple&& tuple)
 	{
-		return detail::get_impl<i, std::remove_cvref_t<Tuple>>::get(tuple);
+		return detail::get_impl<i, std::remove_cvref_t<Tuple>>::get(std::forward<Tuple>(tuple));
 	}
 }
 

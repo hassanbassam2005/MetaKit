@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="helper_.h" />
     <ClInclude Include="tuple.h" />
     <ClInclude Include="type_list.h" />
   </ItemGroup>

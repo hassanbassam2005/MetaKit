@@ -21,5 +21,8 @@
     <ClInclude Include="tuple.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="helper_.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
