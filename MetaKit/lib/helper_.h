@@ -207,6 +207,53 @@ namespace helper_
      */
     template<typename T>
     struct remove_cvref : Remove_cvrf_t<T> {};
+
+    /**
+     * @brief Checks if a type is const.
+     *
+     * This is a compile-time check that returns `true` for const types,
+     * and `false` otherwise.
+     */
+    template<typename>
+    constexpr bool is_const_v = false;
+
+    /**
+     * @brief Specialization for const types.
+     *
+     * This specialization sets `is_const_v` to `true` when the type is `const T`.
+     */
+    template<typename T>
+    constexpr bool is_const_v<const T> = true;
+
+    /**
+     * @brief Checks if a type is an l-value reference.
+     *
+     * This is a compile-time check that returns `true` for l-value references (`T&`),
+     * and `false` otherwise.
+     */
+    template<typename>
+    constexpr bool is_lvalue_reference_v = false;
+
+    /**
+     * @brief Specialization for l-value reference types.
+     *
+     * This specialization sets `is_lvalue_reference_v` to `true` when the type is
+     * an l-value reference (`T&`).
+     */
+    template<typename T>
+    constexpr bool is_lvalue_reference_v<T&> = true;
+
+    /**
+     * @brief Trait to determine if a type is an l-value reference.
+     *
+     * This trait wraps `is_lvalue_reference_v` in a `bool_constant` to provide a
+     * more standard interface for use in other template code.
+     */
+    template<typename T>
+    struct is_lvalue_reference : bool_constant<is_lvalue_reference_v<T>> {};
+
+
+
 }
 
 #endif

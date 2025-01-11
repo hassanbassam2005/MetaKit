@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "tuple.h"
 
 using namespace tup;

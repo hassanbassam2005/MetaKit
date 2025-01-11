@@ -39,8 +39,8 @@ namespace tup
          * @param e1 The first element in the tuple.
          * @param rest The remaining elements in the tuple.
          */
-        explicit constexpr tuple(element1 e1, element2... rest)
-            : tuple<element2...>(rest...), data(e1) {}
+        explicit constexpr tuple(element1&& e1, element2&&... rest)
+            : tuple<element2...>(std::forward<element2>(rest)...), data(std::forward<element1>(e1)) {}
 
         element1 data; ///< Stores the data for the current tuple element.
     };
@@ -86,21 +86,30 @@ namespace tup
         struct get_impl<0, Tuple>
         {
             /**
-             * @brief Retrieves the element at the specified index.
+             * @brief Retrieves the element at the specified index from the tuple.
              *
-             * @param t The tuple instance.
-             * @return The element at the specified index.
+             * @tparam T The type of the tuple instance.
+             * @param t The tuple instance from which the element will be retrieved.
+             * @return The element at the specified index, adjusted for reference and const-ness.
              */
             template<typename T>
-            constexpr static decltype(auto) get(T& t)
+            constexpr static decltype(auto) get(T&& t)
             {
-                constexpr bool is_constant = std::is_const_v<T>;
+                constexpr bool is_lval = is_lvalue_reference_v<T>;
+                constexpr bool is_constant = is_const_v<remove_refernce_t<T>>;
 
-                if constexpr (is_constant)
-                    return static_cast<const Tuple&>(t).data;
-                else
-                    return static_cast<Tuple&>(t).data;
+                using data_t = front_t<Tuple>;
+
+                if constexpr (is_lval && is_constant)
+                    return static_cast<const data_t&>(static_cast<const Tuple&>(t).data);//lvalue and constant
+                if constexpr (is_lval && !is_constant)
+                    return static_cast<data_t&>(static_cast<Tuple&>(t).data);//lvalue and not constant
+                if constexpr (!is_lval && is_constant)
+                    return static_cast<const data_t&&>(static_cast<const Tuple&&>(t).data);//rvalue and constant
+                if constexpr (!is_lval && !is_constant)
+                    return static_cast<data_t&&>(static_cast<Tuple&&>(t).data);//rvalue and not constant
             }
+
         };
     }
 

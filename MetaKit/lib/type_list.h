@@ -1,11 +1,7 @@
 #ifndef HEADER_H
 #define HEADER_H
 
-#include <iostream>
-#include <list>
 #include <string>
-#include <tuple>
-#include <vector>
 
 #ifndef HELPER__H
 #include "helper_.h"
