@@ -45,7 +45,7 @@ namespace tup
 			template<typename T>
 			constexpr static decltype(auto) get(T& t)
 			{
-				return static_cast<T&>(t).data;
+				return static_cast<tuple&>(t).data;
 			}
 		};
 	}
