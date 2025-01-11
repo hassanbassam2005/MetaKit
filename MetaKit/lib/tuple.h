@@ -19,7 +19,7 @@ namespace tup
 
 	template<typename element1, typename ... element2>
 	struct tuple<element1, element2...> : tuple < element2...>
-	{
+	{	
 		explicit constexpr tuple(element1 e1, element2... rest) : tuple<element2...>(rest...), data(e1) {}
 		element1 data;
 	};
@@ -32,22 +32,22 @@ namespace tup
 	auto make_tuple(elements... elem)
 	{
 		return tuple < std::unwrap_ref_decay_t<elements>...> {elem...};
-	};
+	}
 
 	namespace detail
-	{
-		template<size_t i, typename tuple>
-		struct get_impl : get_impl<i - 1, pop_front_t<tuple>> {};
+	{	
+		template<size_t i, typename Tuple>
+		struct get_impl : get_impl<i - 1, pop_front_t<Tuple>> {};
 
-		template <typename tuple>
-		struct get_impl<0, tuple>
+		template <typename Tuple>
+		struct get_impl<0, Tuple>
 		{
 			template<typename T>
 			constexpr static decltype(auto) get(T& t)
 			{
-				return static_cast<tuple&>(t).data;
+				return static_cast<Tuple&>(t).data;
 			}
-		};
+		};	
 	}
 
 	/*
