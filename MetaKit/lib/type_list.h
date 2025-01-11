@@ -2,10 +2,7 @@
 #define HEADER_H
 
 #include <string>
-
-#ifndef HELPER__H
 #include "helper_.h"
-#endif
 
 using namespace helper_;
 

@@ -137,7 +137,7 @@ namespace helper_
     /**
      * @brief Static assertion to ensure `strip_pointer_t<int*>` correctly reduces to `int`.
      */
-    static_assert(std::is_same_v<strip_pointer_t<int*>, int>, "Pointer stripping failed");
+    static_assert(std::is_same_v<strip_pointer_t<int*>, int>);
 
     /**
      * @brief Removes references from types and provides constant reference equivalents.
@@ -252,6 +252,39 @@ namespace helper_
     template<typename T>
     struct is_lvalue_reference : bool_constant<is_lvalue_reference_v<T>> {};
 
+    /**
+     * @brief Trait to detect rvalue references at compile time.
+     *
+     * This template specializes to `true` for rvalue references (T&&),
+     * and `false` for other types.
+     *
+     * @tparam T The type to check.
+     */
+    template<typename>
+    constexpr bool is_rvalue_reference_v = false;
+
+    /**
+     * @brief Specialization of `is_rvalue_reference_v` for rvalue references.
+     *
+     * This specialization sets the value of `is_rvalue_reference_v` to `true`
+     * when the type is an rvalue reference (T&&).
+     *
+     * @tparam T The type to check, specifically for T&&.
+     */
+    template<typename T>
+    constexpr bool is_rvalue_reference_v<T&&> = true;
+
+    /**
+     * @brief A type trait to check if a type is an rvalue reference.
+     *
+     * This structure inherits from `bool_constant`, providing a static constant
+     * value indicating whether the type T is an rvalue reference. It uses the
+     * `is_rvalue_reference_v` helper variable for the check.
+     *
+     * @tparam T The type to check.
+     */
+    template<typename T>
+    struct is_rvalue_reference : bool_constant<is_rvalue_reference_v<T>> {};
 
 
 }
