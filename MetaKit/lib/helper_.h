@@ -3,168 +3,210 @@
 
 namespace helper_
 {
-	/**
-	 * @brief Wrapper to hold a type.
-	 *
-	 * @tparam T The type to be wrapped.
-	 */
-	template <typename T>
-	struct has_type {
-		using type = T;
-	};
-	/**
-	 * @brief Implements compile-time conditional branching.
-	 *
-	 * @tparam condition The compile-time condition to evaluate.
-	 * @tparam THEN The type to use if the condition is true.
-	 * @tparam ELSE The type to use if the condition is false.
-	 */
-	template <bool condition, typename THEN, typename ELSE>
-	struct if_;
+    /**
+     * @brief Wrapper to hold a type.
+     *
+     * @tparam T The type to be wrapped.
+     */
+    template <typename T>
+    struct has_type {
+        using type = T;
+    };
 
-	/**
-	 * @brief Specialization for true condition.
-	 */
-	template <typename THEN, typename ELSE>
-	struct if_<true, THEN, ELSE> : has_type<THEN> {};
+    /**
+     * @brief Implements compile-time conditional branching.
+     *
+     * @tparam condition The compile-time condition to evaluate.
+     * @tparam THEN The type to use if the condition is true.
+     * @tparam ELSE The type to use if the condition is false.
+     */
+    template <bool condition, typename THEN, typename ELSE>
+    struct if_;
 
-	/**
-	 * @brief Specialization for false condition.
-	 */
-	template <typename THEN, typename ELSE> 
-	struct if_<false, THEN, ELSE> : has_type<ELSE> {};
+    /**
+     * @brief Specialization for true condition.
+     */
+    template <typename THEN, typename ELSE>
+    struct if_<true, THEN, ELSE> : has_type<THEN> {};
 
-	static_assert(std::is_same_v<typename if_<(10 > 5), int, bool>::type, int>);
-	static_assert(std::is_same_v<typename if_<(10 < 5), int, bool>::type, bool>);
+    /**
+     * @brief Specialization for false condition.
+     */
+    template <typename THEN, typename ELSE>
+    struct if_<false, THEN, ELSE> : has_type<ELSE> {};
 
-	/**
-    * @brief Represents a constant integral value as a type.
-	*
-	* @tparam T The type of the integral value.
-	* @tparam val The constant value.
-	*/
-	template<typename T, T val>
-	struct integral_constant
-	{
-		static constexpr T value = val;
-		using value_type = T;
-		using type = integral_constant;
-		constexpr operator value_type() const noexcept { return value; }
-		constexpr value_type operator()() const noexcept { return value; }
-	};
+    static_assert(std::is_same_v<typename if_<(10 > 5), int, bool>::type, int>);
+    static_assert(std::is_same_v<typename if_<(10 < 5), int, bool>::type, bool>);
 
-	/**
-	 * @brief Specialization for boolean constants.
-	 *
-	 * @tparam T Boolean value.
-	 */
-	template<bool T>
-	using bool_constant = integral_constant<bool, T>;
+    /**
+     * @brief Represents a constant integral value as a type.
+     *
+     * @tparam T The type of the integral value.
+     * @tparam val The constant value.
+     */
+    template<typename T, T val>
+    struct integral_constant
+    {
+        static constexpr T value = val;
+        using value_type = T;
+        using type = integral_constant;
+        constexpr operator value_type() const noexcept { return value; }
+        constexpr value_type operator()() const noexcept { return value; }
+    };
 
-	/**
-	 * @brief Checks if two types are the same.
-	 */
-	template <typename, typename>
-	constexpr bool is_same_v = false;
+    /**
+     * @brief Specialization for boolean constants.
+     *
+     * @tparam T Boolean value.
+     */
+    template<bool T>
+    using bool_constant = integral_constant<bool, T>;
 
-	/**
-	 * @brief Specialization for matching types.
-	 */
-	template<typename T1>
-	constexpr bool is_same_v<T1, T1> = true;
+    /**
+     * @brief Checks if two types are the same.
+     */
+    template <typename, typename>
+    constexpr bool is_same_v = false;
 
-	/**
-	 * @brief Boolean trait to determine if two types are the same.
-	 */
-	template<typename T1, typename T2>
-	struct is_same : bool_constant<is_same_v<T1, T2>> {};
+    /**
+     * @brief Specialization for matching types.
+     */
+    template<typename T1>
+    constexpr bool is_same_v<T1, T1> = true;
 
-	/**
-	 * @brief Boolean false type.
-	 */
-	using false_type = bool_constant<false>;
+    /**
+     * @brief Boolean trait to determine if two types are the same.
+     */
+    template<typename T1, typename T2>
+    struct is_same : bool_constant<is_same_v<T1, T2>> {};
 
-	/**
-	 * @brief Boolean true type.
-	 */
-	using true_type = bool_constant<true>;
+    /**
+     * @brief Boolean false type.
+     */
+    using false_type = bool_constant<false>;
 
-	/**
-	 * @brief Trait to determine if a type is a pointer.
-	 */
-	template<typename T>
-	struct is_pointer
-	{
-		static constexpr bool value = false;
-	};
+    /**
+     * @brief Boolean true type.
+     */
+    using true_type = bool_constant<true>;
 
-	/**
-	 * @brief Specialization for pointer types.
-	 */
-	template<typename T>
-	struct is_pointer<T*>
-	{
-		static constexpr bool value = true;
-	};
+    /**
+     * @brief Trait to determine if a type is a pointer.
+     */
+    template<typename T>
+    struct is_pointer
+    {
+        static constexpr bool value = false;
+    };
 
-	/**
-	 * @brief Removes pointer from a type.
-	 */
-	template<typename T>
-	struct strip_pointer
-	{
-		using type = T;
-	};
+    /**
+     * @brief Specialization for pointer types.
+     */
+    template<typename T>
+    struct is_pointer<T*>
+    {
+        static constexpr bool value = true;
+    };
 
-	/**
-	 * @brief Specialization to strip pointer types.
-	 */
-	template<typename T>
-	struct strip_pointer<T*> 
-	{
-		using type = typename strip_pointer<T>::type;
-	};
+    /**
+     * @brief Removes pointer from a type.
+     */
+    template<typename T>
+    struct strip_pointer
+    {
+        using type = T;
+    };
 
-	template<typename T>
-	using strip_pointer_t = typename strip_pointer<T>::type;
+    /**
+     * @brief Specialization to strip pointer types.
+     */
+    template<typename T>
+    struct strip_pointer<T*>
+    {
+        using type = typename strip_pointer<T>::type;
+    };
 
-	static_assert(is_same_v<strip_pointer_t<int*>,int>);
+    /**
+     * @brief Alias for removing pointers from types.
+     *
+     * @tparam T The type to process.
+     */
+    template<typename T>
+    using strip_pointer_t = typename strip_pointer<T>::type;
 
-	template<typename T>
-	struct remove_reference
-	{
-		using type = T;
-		using const_ref = const T;
-	};
+    /**
+     * @brief Static assertion to ensure `strip_pointer_t<int*>` correctly reduces to `int`.
+     */
+    static_assert(std::is_same_v<strip_pointer_t<int*>, int>, "Pointer stripping failed");
 
-	template<typename T>
-	struct remove_reference<T&>
-	{
-		using type = T;
-		using const_ref = const T&;
-	};
+    /**
+     * @brief Removes references from types and provides constant reference equivalents.
+     *
+     * @tparam T The type to process.
+     */
+    template<typename T>
+    struct remove_reference {
+        using type = T;            ///< Type without reference.
+        using const_ref = const T; ///< Corresponding constant reference type.
+    };
 
-	template<typename T>
-	struct remove_reference<T&&>
-	{
-		using type = T;
-		using const_ref = const T&&;
-	};
+    /**
+     * @brief Specialization for l-value references (T&).
+     */
+    template<typename T>
+    struct remove_reference<T&> {
+        using type = T;
+        using const_ref = const T&;
+    };
 
-	template<typename T>
-	using remove_refernce_t = typename remove_reference<T>::type;
+    /**
+     * @brief Specialization for r-value references (T&&).
+     */
+    template<typename T>
+    struct remove_reference<T&&> {
+        using type = T;
+        using const_ref = const T&&;
+    };
 
-	template<typename T>
-	using const_through_ref = typename remove_reference<T>::const_ref;
+    /**
+     * @brief Alias for accessing the type without references.
+     *
+     * @tparam T The type to process.
+     */
+    template<typename T>
+    using remove_refernce_t = typename remove_reference<T>::type;
 
-	template<typename T>
-	using remove_cvrf_t = typename std::remove_cv_t<remove_refernce_t<T>>;
+    /**
+     * @brief Alias for getting a constant reference type after removing references.
+     *
+     * @tparam T The type to process.
+     */
+    template<typename T>
+    using const_through_ref = typename remove_reference<T>::const_ref;
 
-	template<typename T>
-	using Remove_cvrf_t = remove_cvrf_t<T>;
+    /**
+     * @brief Removes references and const/volatile qualifiers from types.
+     *
+     * @tparam T The type to process.
+     */
+    template<typename T>
+    using remove_cvrf_t = typename std::remove_cv_t<remove_refernce_t<T>>;
 
-	template<typename T>
-	struct remove_cvref : Remove_cvrf_t<T> {};
+    /**
+     * @brief Alias for consistent naming in removing references and qualifiers.
+     *
+     * @tparam T The type to process.
+     */
+    template<typename T>
+    using Remove_cvrf_t = remove_cvrf_t<T>;
+
+    /**
+     * @brief Removes references, const, and volatile qualifiers from types.
+     *
+     * @tparam T The type to process.
+     */
+    template<typename T>
+    struct remove_cvref : Remove_cvrf_t<T> {};
 }
 
 #endif
