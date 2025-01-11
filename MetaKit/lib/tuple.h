@@ -40,7 +40,7 @@ namespace tup
          * @param rest The remaining elements in the tuple.
          */
         explicit constexpr tuple(element1&& e1, element2&&... rest)
-            : tuple<element2...>(std::forward<element2>(rest)...), data(std::forward<element1>(e1)) {}
+            : tuple<element2...>(forward<element2>(rest)...), data(forward<element1>(e1)) {}
 
         element1 data; ///< Stores the data for the current tuple element.
     };
@@ -63,7 +63,7 @@ namespace tup
     template<typename ... elements>
     constexpr auto make_tuple(elements&&... elem)
     {
-        return tuple<std::unwrap_ref_decay_t<elements>...>{std::forward<elements>(elem)...};
+        return tuple<std::unwrap_ref_decay_t<elements>...>{forward<elements>(elem)...};
     }
 
     namespace detail
@@ -111,7 +111,7 @@ namespace tup
             }
 
         };
-    }
+    }//end of namespace detail
 
     /**
      * @brief Retrieves the element at the specified index in the tuple.
@@ -124,7 +124,7 @@ namespace tup
     template<size_t i, typename Tuple>
     constexpr decltype(auto) get(Tuple&& tuple)
     {
-        return detail::get_impl<i, Remove_cvrf_t<Tuple>>::get(std::forward<Tuple>(tuple));
+        return detail::get_impl<i, Remove_cvrf_t<Tuple>>::get(forward<Tuple>(tuple));
     }
 }
 

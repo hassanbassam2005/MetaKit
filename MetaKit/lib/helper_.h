@@ -286,7 +286,17 @@ namespace helper_
     template<typename T>
     struct is_rvalue_reference : bool_constant<is_rvalue_reference_v<T>> {};
 
+    template<typename T>
+    constexpr T&& forward(remove_refernce_t<T>& args) noexcept
+    {
+        return static_cast<T&&>(args);
+    }
 
+    template<typename T>
+    constexpr T&& forward(remove_refernce_t<T>&& args) noexcept
+    {
+        return static_cast<T&&>(args);
+    }
 }
 
 #endif
