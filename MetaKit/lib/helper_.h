@@ -286,17 +286,38 @@ namespace helper_
     template<typename T>
     struct is_rvalue_reference : bool_constant<is_rvalue_reference_v<T>> {};
 
+    /**
+     * @brief Forwarding function for lvalue references.
+     *
+     * This function casts the given lvalue to an rvalue reference of the
+     * appropriate type. It is used for perfectly forwarding lvalues.
+     *
+     * @tparam T The type of the argument.
+     * @param args The lvalue to forward.
+     * @return The forwarded lvalue as an rvalue reference.
+     */
     template<typename T>
     constexpr T&& forward(remove_refernce_t<T>& args) noexcept
     {
         return static_cast<T&&>(args);
     }
 
+    /**
+     * @brief Forwarding function for rvalue references.
+     *
+     * This function casts the given rvalue to an rvalue reference of the
+     * appropriate type. It is used for perfectly forwarding rvalues.
+     *
+     * @tparam T The type of the argument.
+     * @param args The rvalue to forward.
+     * @return The forwarded rvalue as an rvalue reference.
+     */
     template<typename T>
     constexpr T&& forward(remove_refernce_t<T>&& args) noexcept
     {
         return static_cast<T&&>(args);
     }
+
 }
 
 #endif
