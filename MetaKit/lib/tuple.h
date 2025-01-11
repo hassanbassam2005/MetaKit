@@ -1,11 +1,6 @@
 #ifndef TUPLE_H
 #define TUPLE_H
 
-#include <tuple>
-#include <memory>
-#include <type_traits>
-#include <functional>
-
 #include "type_list.h"
 
 #ifndef HELPER__H
