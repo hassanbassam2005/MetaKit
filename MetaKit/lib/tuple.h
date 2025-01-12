@@ -107,26 +107,78 @@ namespace tup
             }
         };
 
+        /**
+         * @brief Helper struct to concatenate multiple tuples.
+         *
+         * This struct contains utilities to compute tuple sizes and perform
+         * tuple concatenation by forwarding elements from two tuples.
+         */
         struct tuple_cat_impl
         {
+            /**
+             * @brief Helper to compute the size of a given tuple.
+             *
+             * This specialization determines the number of elements in a tuple.
+             *
+             * @tparam Tuples The tuple type whose size is being computed.
+             */
             template<typename Tuples>
             struct tuple_size;
 
+            /**
+             * @brief Specialization for computing the size of a tuple.
+             *
+             * This uses `sizeof...` to determine the number of elements in a tuple.
+             *
+             * @tparam elements Parameter pack representing tuple elements.
+             */
             template<typename ... elements>
-            struct tuple_size<tuple<elements... >> : integral_constant<size_t, sizeof...(elements)> {};
+            struct tuple_size<tuple<elements...>> : integral_constant<size_t, sizeof...(elements)> {};
 
+            /**
+             * @brief Compile-time constant for the size of a tuple.
+             *
+             * @tparam Tuples The tuple type whose size is being computed.
+             */
             template<typename Tuples>
             static constexpr size_t tuple_size_v = tuple_size<Tuples>::value;
 
+            /**
+             * @brief Concatenates two tuples by forwarding their elements.
+             *
+             * This function uses index sequences to access and concatenate tuple elements.
+             *
+             * @tparam Tuple1 The type of the first tuple.
+             * @tparam Tuple2 The type of the second tuple.
+             * @param t1 The first tuple.
+             * @param t2 The second tuple.
+             * @return The concatenated tuple.
+             */
             template<typename Tuple1, typename Tuple2>
             static auto f(Tuple1&& t1, Tuple2&& t2)
             {
-                return cat_from_indices(std::forward<Tuple1>(t1),
+                return cat_from_indices(
+                    std::forward<Tuple1>(t1),
                     std::forward<Tuple2>(t2),
                     std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple1>>>{},
-                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple2>>>{});
+                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple2>>>{}
+                );
             }
 
+            /**
+             * @brief Helper function to concatenate tuples using index sequences.
+             *
+             * This function accesses tuple elements using indices and constructs
+             * a new concatenated tuple by forwarding the elements.
+             *
+             * @tparam Tuple1 The type of the first tuple.
+             * @tparam Tuple2 The type of the second tuple.
+             * @tparam indices1 The index sequence for the first tuple.
+             * @tparam indices2 The index sequence for the second tuple.
+             * @param tuple1 The first tuple.
+             * @param tuple2 The second tuple.
+             * @return The concatenated tuple.
+             */
             template<typename Tuple1, typename Tuple2, size_t ...indices1, size_t ...indices2>
             static auto cat_from_indices(Tuple1&& tuple1,
                 Tuple2&& tuple2,
@@ -152,11 +204,22 @@ namespace tup
         return detail::get_impl<i, remove_cvrf_t<Tuple>>::get(forward<Tuple>(tuple));
     }
 
+    /**
+     * @brief Concatenates multiple tuples into a single tuple.
+     *
+     * This function forwards the given tuples to a helper function
+     * in `detail::tuple_cat_impl` to perform the concatenation.
+     *
+     * @tparam Tuple Parameter pack representing the types of the input tuples.
+     * @param tuples The tuples to concatenate.
+     * @return The concatenated tuple.
+     */
     template<typename ... Tuple>
     constexpr decltype(auto) tuple_cat(Tuple&&... tuples)
     {
         return detail::tuple_cat_impl::f(forward<Tuple>(tuples)...);
     }
+
 }
 
 #endif
