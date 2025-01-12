@@ -36,7 +36,7 @@ namespace tup
          */
         template<typename T,typename ... Ts>
         explicit constexpr tuple(T&& e1, Ts&&... rest)
-            : tuple<element2...>(std::forward<Ts>(rest)...), data(std::forward<T>(e1)) {}
+            : tuple<element2...>(forward<Ts&&>(rest)...), data(forward<T>(e1)) {}
 
         element1 data; //Stores the data for the current tuple element.
     };
@@ -116,15 +116,15 @@ namespace tup
             struct tuple_size<tuple<elements... >> : integral_constant<size_t, sizeof...(elements)> {};
 
             template<typename Tuples>
-            static constexpr size_t ov_tuple_size_v = tuple_size<Tuples>::value;
+            static constexpr size_t tuple_size_v = tuple_size<Tuples>::value;
 
             template<typename Tuple1, typename Tuple2>
             static auto f(Tuple1&& t1, Tuple2&& t2)
             {
-                return cat_from_indices(forward<Tuple1>(t1),
-                    forward<Tuple2>(t2),
-                    std::make_index_sequence<ov_tuple_size_v<remove_cvrf_t<Tuple1>>>{},
-                    std::make_index_sequence<ov_tuple_size_v<remove_cvrf_t<Tuple2>>>{});
+                return cat_from_indices(std::forward<Tuple1>(t1),
+                    std::forward<Tuple2>(t2),
+                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple1>>>{},
+                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple2>>>{});
             }
 
             template<typename Tuple1, typename Tuple2, size_t ...indices1, size_t ...indices2>
@@ -155,7 +155,7 @@ namespace tup
     template<typename ... Tuple>
     constexpr decltype(auto) tuple_cat(Tuple&&... tuples)
     {
-        return detail::tuple_cat_impl::f(std::forward<Tuple>(tuples)...);
+        return detail::tuple_cat_impl::f(forward<Tuple>(tuples)...);
     }
 }
 

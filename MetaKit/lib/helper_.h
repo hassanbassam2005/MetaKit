@@ -313,9 +313,9 @@ namespace helper_
      * @return The forwarded rvalue as an rvalue reference.
      */
     template<typename T>
+    requires(is_rvalue_reference_v<T>)//added in c++20
     constexpr T&& forward(remove_refernce_t<T>&& args) noexcept
     {
-        static_assert(!is_lvalue_reference_v<T>, "bad forward call");
         return static_cast<T&&>(args);
     }
 
