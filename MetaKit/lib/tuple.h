@@ -158,8 +158,8 @@ namespace tup
             static auto f(Tuple1&& t1, Tuple2&& t2)
             {
                 return cat_from_indices(
-                    std::forward<Tuple1>(t1),
-                    std::forward<Tuple2>(t2),
+                    forward<Tuple1>(t1),
+                    forward<Tuple2>(t2),
                     std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple1>>>{},
                     std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple2>>>{}
                 );
