@@ -190,7 +190,7 @@ namespace helper_
      * @tparam T The type to process.
      */
     template<typename T>
-    using remove_cvrf_t = typename std::remove_cv_t<remove_refernce_t<T>>;
+    using Remove_cvrf_t = typename std::remove_cv_t<remove_refernce_t<T>>;
 
     /**
      * @brief Alias for consistent naming in removing references and qualifiers.
@@ -198,7 +198,7 @@ namespace helper_
      * @tparam T The type to process.
      */
     template<typename T>
-    using Remove_cvrf_t = remove_cvrf_t<T>;
+    using remove_cvrf_t = Remove_cvrf_t<T>;
 
     /**
      * @brief Removes references, const, and volatile qualifiers from types.
@@ -315,6 +315,7 @@ namespace helper_
     template<typename T>
     constexpr T&& forward(remove_refernce_t<T>&& args) noexcept
     {
+        static_assert(!is_lvalue_reference_v<T>, "bad forward call");
         return static_cast<T&&>(args);
     }
 

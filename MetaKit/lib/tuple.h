@@ -34,10 +34,11 @@ namespace tup
          * @param e1 The first element in the tuple.
          * @param rest The remaining elements in the tuple.
          */
-        explicit constexpr tuple(element1&& e1, element2&&... rest)
-            : tuple<element2...>(forward<element2>(rest)...), data(forward<element1>(e1)) {}
+        template<typename T,typename ... Ts>
+        explicit constexpr tuple(T&& e1, Ts&&... rest)
+            : tuple<element2...>(std::forward<Ts>(rest)...), data(std::forward<T>(e1)) {}
 
-        element1 data; ///< Stores the data for the current tuple element.
+        element1 data; //Stores the data for the current tuple element.
     };
 
     /**
@@ -104,7 +105,36 @@ namespace tup
                 if constexpr (!is_lval && !is_constant)
                     return static_cast<data_t&&>(static_cast<Tuple&&>(t).data);//rvalue and not constant
             }
+        };
 
+        struct tuple_cat_impl
+        {
+            template<typename Tuples>
+            struct tuple_size;
+
+            template<typename ... elements>
+            struct tuple_size<tuple<elements... >> : integral_constant<size_t, sizeof...(elements)> {};
+
+            template<typename Tuples>
+            static constexpr size_t ov_tuple_size_v = tuple_size<Tuples>::value;
+
+            template<typename Tuple1, typename Tuple2>
+            static auto f(Tuple1&& t1, Tuple2&& t2)
+            {
+                return cat_from_indices(forward<Tuple1>(t1),
+                    forward<Tuple2>(t2),
+                    std::make_index_sequence<ov_tuple_size_v<remove_cvrf_t<Tuple1>>>{},
+                    std::make_index_sequence<ov_tuple_size_v<remove_cvrf_t<Tuple2>>>{});
+            }
+
+            template<typename Tuple1, typename Tuple2, size_t ...indices1, size_t ...indices2>
+            static auto cat_from_indices(Tuple1&& tuple1,
+                Tuple2&& tuple2,
+                std::index_sequence<indices1...>,
+                std::index_sequence<indices2...>)
+            {
+                return tuple{ get<indices1>(forward<Tuple1>(tuple1))...,get<indices2>(forward<Tuple2>(tuple2))... };
+            }
         };
     }//end of namespace detail
 
@@ -119,7 +149,13 @@ namespace tup
     template<size_t i, typename Tuple>
     constexpr decltype(auto) get(Tuple&& tuple)
     {
-        return detail::get_impl<i, Remove_cvrf_t<Tuple>>::get(forward<Tuple>(tuple));
+        return detail::get_impl<i, remove_cvrf_t<Tuple>>::get(forward<Tuple>(tuple));
+    }
+
+    template<typename ... Tuple>
+    constexpr decltype(auto) tuple_cat(Tuple&&... tuples)
+    {
+        return detail::tuple_cat_impl::f(std::forward<Tuple>(tuples)...);
     }
 }
 

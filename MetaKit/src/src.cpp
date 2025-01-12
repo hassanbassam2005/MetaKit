@@ -12,7 +12,9 @@ int main()
 	std::list<int> lister;
 	type_list<int, double, bool>  l;
 	auto tupe = make_tuple(1.4, 5, "hassan");
-	tuple tot{ 3,"bassam",2.4 };
+	tuple tot{ 3,true};
+	tuple tot2{ 2.4,std::string{"saas"}};
+	//auto t_t = tuple_cat(tot, tot2);
 	const tuple tupa{ 1.3,"hi" };
 	using l1 = type_list<int, float, bool>;
 	using l2 = push_back_t<l1, std::string>;
