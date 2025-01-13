@@ -139,44 +139,44 @@ namespace metakit
      */
     static_assert(std::is_same_v<strip_pointer_t<int*>, int>);
 
-    //template<typename T>
-    //struct remove_cv
-    //{
-    //    using type = T;
+    template<typename T>
+    struct remove_cv
+    {
+        using type = T;
 
-    //    template<template<typename> class Tn>
-    //    using no_cv = Tn<T>;
-    //};
+       template<template<typename> class Tn>
+       using no_cv = Tn<T>;
+    };
 
-    //template<typename T>
-    //struct remove_cv<const T>
-    //{
-    //    using type = T;
+    template<typename T>
+    struct remove_cv<const T>
+    {
+        using type = T;
 
-    //    template<template<typename>class Tn >
-    //    using no_cv = const Tn<T>;
-    //};
+       template<template<typename>class Tn >
+       using no_cv = const Tn<T>;
+    };
 
-    //template<typename T>
-    //struct remove_cv <volatile T>
-    //{
-    //    using type = T;
+    template<typename T>
+    struct remove_cv <volatile T>
+    {
+       using type = T;
 
-    //    template<template<typename>class Tn >
-    //    using no_cv = volatile Tn<T>;
-    //};
+       template<template<typename>class Tn >
+       using no_cv = volatile Tn<T>;
+    };
 
-    //template<typename T>
-    //struct remove_cv<const volatile T>
-    //{
-    //    using type = T;
+    template<typename T>
+    struct remove_cv<const volatile T>
+    {
+        using type = T;
 
-    //    template<template<typename>class Tn >
-    //    using no_cv = const volatile Tn<T>;
-    //};
+       template<template<typename>class Tn >
+       using no_cv = const volatile Tn<T>;
+    };
 
-    //template<typename T>
-    //using remove_cv_t = typename remove_cv<T>::type;
+    template<typename T>
+    using remove_cv_t = typename remove_cv<T>::type;
 
     /**
      * @brief Removes references from types and provides constant reference equivalents.

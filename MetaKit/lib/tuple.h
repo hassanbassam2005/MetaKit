@@ -154,17 +154,22 @@ namespace metakit
              * @param t2 The second tuple.
              * @return The concatenated tuple.
              */
-            template<typename Tuple1, typename Tuple2>
-            static auto f(Tuple1&& t1, Tuple2&& t2)
+            template<typename rest_tuple ,typename Tuple, typename... Tuples>
+            static auto f(rest_tuple&& rest,Tuple&& t, Tuples&&... ts)
             {
                 return cat_from_indices(
-                    forward<Tuple1>(t1),
-                    forward<Tuple2>(t2),
-                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple1>>>{},
-                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple2>>>{}
+                    forward<rest_tuple>(rest),
+                    forward<Tuple>(t),
+                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<rest_tuple>>>{},
+                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple>>>{}
                 );
             }
 
+            template<typename rest_tuple>
+            static constexpr auto f(rest_tuple&& rest)
+            {
+                return forward<rest_tuple>(rest);
+            }
             /**
              * @brief Helper function to concatenate tuples using index sequences.
              *

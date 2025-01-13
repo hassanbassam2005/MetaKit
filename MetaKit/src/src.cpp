@@ -14,7 +14,8 @@ int main()
 	auto tupe = make_tuple(1.4, 5, "hassan");
 	tuple tot{ 3,true};
 	tuple tot2{ 2.4,"saas"};
-	auto t_t = tuple_cat(tot, tot2);
+	tuple tot3{ 3.4,55 };
+	auto t_t = tuple_cat(tot, tot2, tot3);
 	const tuple tupa{ 1.3,"hi" };
 	using l1 = type_list<int, float, bool>;
 	using l2 = push_back_t<l1, std::string>;
