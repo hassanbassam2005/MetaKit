@@ -139,6 +139,45 @@ namespace helper_
      */
     static_assert(std::is_same_v<strip_pointer_t<int*>, int>);
 
+    //template<typename T>
+    //struct remove_cv
+    //{
+    //    using type = T;
+
+    //    template<template<typename> class Tn>
+    //    using no_cv = Tn<T>;
+    //};
+
+    //template<typename T>
+    //struct remove_cv<const T>
+    //{
+    //    using type = T;
+
+    //    template<template<typename>class Tn >
+    //    using no_cv = const Tn<T>;
+    //};
+
+    //template<typename T>
+    //struct remove_cv <volatile T>
+    //{
+    //    using type = T;
+
+    //    template<template<typename>class Tn >
+    //    using no_cv = volatile Tn<T>;
+    //};
+
+    //template<typename T>
+    //struct remove_cv<const volatile T>
+    //{
+    //    using type = T;
+
+    //    template<template<typename>class Tn >
+    //    using no_cv = const volatile Tn<T>;
+    //};
+
+    //template<typename T>
+    //using remove_cv_t = typename remove_cv<T>::type;
+
     /**
      * @brief Removes references from types and provides constant reference equivalents.
      *
@@ -199,14 +238,6 @@ namespace helper_
      */
     template<typename T>
     using remove_cvrf_t = Remove_cvrf_t<T>;
-
-    /**
-     * @brief Removes references, const, and volatile qualifiers from types.
-     *
-     * @tparam T The type to process.
-     */
-    template<typename T>
-    struct remove_cvref : Remove_cvrf_t<T> {};
 
     /**
      * @brief Checks if a type is const.
@@ -318,6 +349,7 @@ namespace helper_
     {
         return static_cast<T&&>(args);
     }
+    
 
 }
 
