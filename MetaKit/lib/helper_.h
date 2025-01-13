@@ -139,44 +139,87 @@ namespace metakit
      */
     static_assert(std::is_same_v<strip_pointer_t<int*>, int>);
 
+    /**
+     * @brief Primary template for removing const and volatile qualifiers from a type.
+     *
+     * Provides a type alias `type` that retains the original type and a nested alias template
+     * `no_cv` to apply a transformation while preserving qualifiers.
+     *
+     * @tparam T The type to process.
+     */
     template<typename T>
     struct remove_cv
     {
-        using type = T;
+        using type = T; ///< Alias for the type without qualifiers.
 
-       template<template<typename> class Tn>
-       using no_cv = Tn<T>;
+        /**
+         * @brief Applies a transformation `Tn` to the type without qualifiers.
+         *
+         * @tparam Tn The template to apply.
+         */
+        template<template<typename> class Tn>
+        using no_cv = Tn<T>;
     };
 
+    /**
+     * @brief Specialization for removing `const` qualifier from a type.
+     *
+     * Provides a type alias `type` without the `const` qualifier and `no_cv` to apply
+     * transformations while retaining the `const` qualifier.
+     *
+     * @tparam T The type to process.
+     */
     template<typename T>
     struct remove_cv<const T>
     {
         using type = T;
 
-       template<template<typename>class Tn >
-       using no_cv = const Tn<T>;
+        template<template<typename> class Tn>
+        using no_cv = const Tn<T>;
     };
 
+    /**
+     * @brief Specialization for removing `volatile` qualifier from a type.
+     *
+     * Provides a type alias `type` without the `volatile` qualifier and `no_cv` to apply
+     * transformations while retaining the `volatile` qualifier.
+     *
+     * @tparam T The type to process.
+     */
     template<typename T>
-    struct remove_cv <volatile T>
+    struct remove_cv<volatile T>
     {
-       using type = T;
+        using type = T;
 
-       template<template<typename>class Tn >
-       using no_cv = volatile Tn<T>;
+        template<template<typename> class Tn>
+        using no_cv = volatile Tn<T>;
     };
 
+    /**
+     * @brief Specialization for removing both `const` and `volatile` qualifiers from a type.
+     *
+     * Provides a type alias `type` without the `const volatile` qualifiers and `no_cv`
+     * to apply transformations while retaining both qualifiers.
+     *
+     * @tparam T The type to process.
+     */
     template<typename T>
     struct remove_cv<const volatile T>
     {
         using type = T;
 
-       template<template<typename>class Tn >
-       using no_cv = const volatile Tn<T>;
+        template<template<typename> class Tn>
+        using no_cv = const volatile Tn<T>;
     };
 
+    /**
+     * @brief Alias template for simplifying access to the `type` member of `remove_cv`.
+     *
+     * @tparam T The type to process.
+     */
     template<typename T>
     using remove_cv_t = typename remove_cv<T>::type;
+
 
     /**
      * @brief Removes references from types and provides constant reference equivalents.
