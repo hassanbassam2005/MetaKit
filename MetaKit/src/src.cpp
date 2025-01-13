@@ -4,7 +4,7 @@
 #include "tuple.h"
 #include "type_list.h"
 
-using namespace tup;
+using namespace metakit;
 
 int main()
 {
@@ -31,3 +31,5 @@ int main()
 	std::cout << get<3>(t_t) << "\n";
 	return 0;
 }
+
+

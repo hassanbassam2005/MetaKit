@@ -7,9 +7,9 @@
 #include "helper_.h"
 #endif 
 
-using namespace helper_;
+using namespace metakit;
 
-namespace tup
+namespace metakit
 {
     /**
      * @brief Base case for an empty tuple.

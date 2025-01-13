@@ -1,7 +1,7 @@
 #ifndef HELPER__H
 #define HELPER__H
 
-namespace helper_
+namespace metakit
 {
     /**
      * @brief Wrapper to hold a type.
@@ -349,8 +349,6 @@ namespace helper_
     {
         return static_cast<T&&>(args);
     }
-    
-
 }
 
 #endif
