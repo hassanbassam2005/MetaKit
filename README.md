@@ -19,7 +19,13 @@ Here’s a basic example to demonstrate MetaKit:
 ```cpp
 #include <metakit/typelist.hpp>
 
-// Example usage code here
+int main()
+{
+  //make 2 tuples and concatenate them
+  tuple tot{ 3,true};
+  tuple tot2{ 2.4,"saas"};
+  auto t_t = tuple_cat(tot, tot2);
+}
 ```
 More examples are available in the documentation and source files.
 
