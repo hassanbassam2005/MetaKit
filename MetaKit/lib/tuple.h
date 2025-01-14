@@ -143,6 +143,12 @@ namespace metakit
             template<typename Tuples>
             static constexpr size_t tuple_size_v = tuple_size<Tuples>::value;
 
+            template<typename ...T>
+            static constexpr tuple<T&&...> forward_as_tuple(T&&... args)
+            {
+                return tuple<T&&...>(forward<T>(args)...);
+            };
+
             /**
              * @brief Concatenates two tuples by forwarding their elements.
              *
@@ -155,7 +161,7 @@ namespace metakit
              * @return The concatenated tuple.
              */
             template<typename rest_tuple ,typename Tuple, typename... Tuples>
-            static auto f(rest_tuple&& rest,Tuple&& t, Tuples&&... ts)
+            static constexpr auto f(rest_tuple&& rest,Tuple&& t, Tuples&&... ts)
             {
                 return cat_from_indices(
                     forward<rest_tuple>(rest),
@@ -185,12 +191,12 @@ namespace metakit
              * @return The concatenated tuple.
              */
             template<typename Tuple1, typename Tuple2, size_t ...indices1, size_t ...indices2>
-            static auto cat_from_indices(Tuple1&& tuple1,
-                Tuple2&& tuple2,
+            static constexpr auto cat_from_indices(Tuple1&& tuple1,
+                Tuple2&& tuples,
                 std::index_sequence<indices1...>,
                 std::index_sequence<indices2...>)
             {
-                return tuple{ get<indices1>(forward<Tuple1>(tuple1))...,get<indices2>(forward<Tuple2>(tuple2))... };
+                return tuple{ get<indices1>(forward<Tuple1>(tuple1))...,get<indices2>(forward<Tuple2>(tuples))... };
             }
         };
     }//end of namespace detail

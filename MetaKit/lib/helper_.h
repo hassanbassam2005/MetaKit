@@ -220,7 +220,6 @@ namespace metakit
     template<typename T>
     using remove_cv_t = typename remove_cv<T>::type;
 
-
     /**
      * @brief Removes references from types and provides constant reference equivalents.
      *
@@ -272,7 +271,7 @@ namespace metakit
      * @tparam T The type to process.
      */
     template<typename T>
-    using Remove_cvrf_t = typename std::remove_cv_t<remove_refernce_t<T>>;
+    using Remove_cvrf_t = typename remove_cv<remove_refernce_t<T>>::type;
 
     /**
      * @brief Alias for consistent naming in removing references and qualifiers.

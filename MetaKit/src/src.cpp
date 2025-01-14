@@ -14,12 +14,12 @@ int main()
 	auto tupe = make_tuple(1.4, 5, "hassan");
 	tuple tot{ 3,true};
 	tuple tot2{ 2.4,"saas"};
-	tuple tot3{ 3.4,55 };
-	auto t_t = tuple_cat(tot, tot2, tot3);
+	tuple tot3{ 3,6 };
+	auto t_t = tuple_cat(tot, tot2);
 	const tuple tupa{ 1.3,"hi" };
 	using l1 = type_list<int, float, bool>;
 	using l2 = push_back_t<l1, std::string>;
-
+		
 	static_assert(is_same_v<typename front_t<decltype(l)>, int>);
 	back_t<decltype(list)> ls;
 	std::cout << std::boolalpha << is_same_v<decltype(l), decltype(ls)> << "\n";
