@@ -64,6 +64,35 @@ namespace metakit
 
     namespace detail
     {
+
+        /**
+        * @brief Helper to compute the size of a given tuple.
+        *
+        * This specialization determines the number of elements in a tuple.
+        *
+        * @tparam Tuples The tuple type whose size is being computed.
+        */
+        template<typename Tuples>
+        struct tuple_size;
+
+        /**
+         * @brief Specialization for computing the size of a tuple.
+         *
+         * This uses `sizeof...` to determine the number of elements in a tuple.
+         *
+         * @tparam elements Parameter pack representing tuple elements.
+         */
+        template<typename ... elements>
+        struct tuple_size<tuple<elements...>> : integral_constant<size_t, sizeof...(elements)> {};
+
+        /**
+         * @brief Compile-time constant for the size of a tuple.
+         *
+         * @tparam Tuples The tuple type whose size is being computed.
+         */
+        template<typename Tuples>
+        static constexpr size_t tuple_size_v = tuple_size<Tuples>::value;
+
         /**
          * @brief Recursive implementation for accessing tuple elements by index.
          *
@@ -107,6 +136,34 @@ namespace metakit
             }
         };
 
+        template <typename index>
+        struct make_tuple_from_fwd_tuple;
+
+        template <size_t... indices>
+        struct make_tuple_from_fwd_tuple<std::index_sequence<indices...>> {
+            template <typename fwd_tuple>
+            static constexpr auto f(fwd_tuple&& fwd) {
+                return tuple{ get<indices>(forward<fwd_tuple>(fwd))... };
+            }
+        };
+
+        template<typename ...T>
+        static constexpr tuple<T&&...> forward_as_tuple(T&&... args)
+        {
+            return tuple<T&&...>(forward<T>(args)...);
+        };
+
+        template <typename FWD_INDEX_SEQ, typename TUPLE_INDEX_SEQ>
+        struct concat_with_fwd_tuple;
+
+        template <size_t... fwd_indices, size_t... indices>
+        struct concat_with_fwd_tuple<std::index_sequence<fwd_indices...>, std::index_sequence<indices...>> {
+            template <typename fwd_tuple, typename Tuple>
+            static constexpr auto f(fwd_tuple&& fwd, Tuple&& t) {
+                return forward_as_tuple(get<fwd_indices>(forward<fwd_tuple>(fwd))..., get<indices>(forward<Tuple>(t))...);
+            }
+        };
+
         /**
          * @brief Helper struct to concatenate multiple tuples.
          *
@@ -115,40 +172,6 @@ namespace metakit
          */
         struct tuple_cat_impl
         {
-            /**
-             * @brief Helper to compute the size of a given tuple.
-             *
-             * This specialization determines the number of elements in a tuple.
-             *
-             * @tparam Tuples The tuple type whose size is being computed.
-             */
-            template<typename Tuples>
-            struct tuple_size;
-
-            /**
-             * @brief Specialization for computing the size of a tuple.
-             *
-             * This uses `sizeof...` to determine the number of elements in a tuple.
-             *
-             * @tparam elements Parameter pack representing tuple elements.
-             */
-            template<typename ... elements>
-            struct tuple_size<tuple<elements...>> : integral_constant<size_t, sizeof...(elements)> {};
-
-            /**
-             * @brief Compile-time constant for the size of a tuple.
-             *
-             * @tparam Tuples The tuple type whose size is being computed.
-             */
-            template<typename Tuples>
-            static constexpr size_t tuple_size_v = tuple_size<Tuples>::value;
-
-            template<typename ...T>
-            static constexpr tuple<T&&...> forward_as_tuple(T&&... args)
-            {
-                return tuple<T&&...>(forward<T>(args)...);
-            };
-
             /**
              * @brief Concatenates two tuples by forwarding their elements.
              *
@@ -161,43 +184,20 @@ namespace metakit
              * @return The concatenated tuple.
              */
             template<typename rest_tuple ,typename Tuple, typename... Tuples>
-            static constexpr auto f(rest_tuple&& rest,Tuple&& t, Tuples&&... ts)
+            static constexpr auto f(rest_tuple&& rest,Tuple&& t,Tuples&&... ts)
             {
-                return cat_from_indices(
-                    forward<rest_tuple>(rest),
-                    forward<Tuple>(t),
-                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<rest_tuple>>>{},
-                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple>>>{}
-                );
+                return f(concat_with_fwd_tuple<
+                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<rest_tuple>>>,
+                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple>>>>::f(forward<rest_tuple>(rest), forward<Tuple>(t)),
+                    forward<Tuples>(ts)...);
             }
 
-            template<typename rest_tuple>
-            static constexpr auto f(rest_tuple&& rest)
+            template<typename fwd_tuple>
+            static constexpr auto f(fwd_tuple&& rest)
             {
-                return forward<rest_tuple>(rest);
+                return make_tuple_from_fwd_tuple<std::make_index_sequence<tuple_size_v<fwd_tuple>>>::f(forward<fwd_tuple>(rest));
             }
-            /**
-             * @brief Helper function to concatenate tuples using index sequences.
-             *
-             * This function accesses tuple elements using indices and constructs
-             * a new concatenated tuple by forwarding the elements.
-             *
-             * @tparam Tuple1 The type of the first tuple.
-             * @tparam Tuple2 The type of the second tuple.
-             * @tparam indices1 The index sequence for the first tuple.
-             * @tparam indices2 The index sequence for the second tuple.
-             * @param tuple1 The first tuple.
-             * @param tuple2 The second tuple.
-             * @return The concatenated tuple.
-             */
-            template<typename Tuple1, typename Tuple2, size_t ...indices1, size_t ...indices2>
-            static constexpr auto cat_from_indices(Tuple1&& tuple1,
-                Tuple2&& tuples,
-                std::index_sequence<indices1...>,
-                std::index_sequence<indices2...>)
-            {
-                return tuple{ get<indices1>(forward<Tuple1>(tuple1))...,get<indices2>(forward<Tuple2>(tuples))... };
-            }
+
         };
     }//end of namespace detail
 
@@ -211,7 +211,7 @@ namespace metakit
      */
     template<size_t i, typename Tuple>
     constexpr decltype(auto) get(Tuple&& tuple)
-    {
+    {     
         return detail::get_impl<i, remove_cvrf_t<Tuple>>::get(forward<Tuple>(tuple));
     }
 

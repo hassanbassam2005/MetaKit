@@ -15,7 +15,7 @@ int main()
 	tuple tot{ 3,true};
 	tuple tot2{ 2.4,"saas"};
 	tuple tot3{ 3,6 };
-	auto t_t = tuple_cat(tot, tot2);
+	auto t_t = tuple_cat(tot, tot2,tot3);
 	const tuple tupa{ 1.3,"hi" };
 	using l1 = type_list<int, float, bool>;
 	using l2 = push_back_t<l1, std::string>;
@@ -29,7 +29,7 @@ int main()
 	std::cout << tupe.data << "\n";
 	std::cout << get<1>(tot)<<"\n";
 	std::cout << get<1>(tupa)<<"\n";
-	std::cout << get<3>(t_t) << "\n";
+	std::cout << get<4>(t_t) << "\n";
 	return 0;
 }
 
