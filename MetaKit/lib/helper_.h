@@ -66,13 +66,13 @@ namespace metakit
      * @brief Checks if two types are the same.
      */
     template <typename, typename>
-    constexpr bool is_same_v = false;
+    static constexpr bool is_same_v = false;
 
     /**
      * @brief Specialization for matching types.
      */
     template<typename T1>
-    constexpr bool is_same_v<T1, T1> = true;
+    static constexpr bool is_same_v<T1, T1> = true;
 
     /**
      * @brief Boolean trait to determine if two types are the same.
@@ -391,6 +391,65 @@ namespace metakit
     {
         return static_cast<T&&>(args);
     }
+
+
+    /**
+     * @brief Checks if a type T is equal to any of the types in Ts.
+     *
+     * This is a variadic template that compares the type T with each of the types
+     * in the parameter pack Ts. It returns true if T matches any of the types in Ts.
+     */
+    template<typename T, typename...Ts>
+    constexpr bool is_any_of = (is_same_v<T, Ts> || ...);
+
+    /**
+     * @brief Checks if a type T is an integral type.
+     *
+     * This is a specialization of the `is_any_of` template to check if T is any of
+     * the predefined integral types such as bool, char, int, long, etc.
+     */
+    template<typename T>
+    constexpr bool is_integral_v = is_any_of<T, bool, char, signed char, unsigned char, wchar_t, char8_t,
+        char16_t, char32_t, short, unsigned short, int, unsigned int,
+        long, unsigned long, long long, unsigned long long>;
+
+    /**
+     * @brief Type trait to check if a type T is integral.
+     *
+     * This structure derives from `bool_constant` and uses `is_integral_v<T>` to
+     * determine whether the type T is an integral type. The result is a constant
+     * boolean value, either true or false.
+     */
+    template<typename T>
+    struct is_integral : bool_constant<is_integral_v<T>> {};
+
+
+    /**
+    * @brief A structure to represent a sequence of integral values as a compile-time type.
+    *
+    * This template represents a sequence of integral values (of type `T`) and provides a utility to retrieve
+    * the size of the sequence.
+     *
+     * @tparam T The integral type of the values in the sequence.
+    * @tparam Ts The values of the sequence.
+    */
+    template<typename T, T ...Ts>
+        requires is_integral_v<T>  ///< Ensures that T is an integral type (e.g., int, char, etc.)
+    struct integer_sequence
+    {
+        using value = T; ///< The type of the sequence elements (must be integral).
+
+        /**
+         * @brief Retrieves the size of the sequence.
+         *
+         * @return The number of elements in the sequence (the number of `Ts`).
+         */
+        static constexpr size_t size() noexcept
+        {
+            return sizeof...(Ts);  ///< Returns the number of arguments (elements) in the parameter pack `Ts`.
+        }
+    };
+
 }
 
 #endif
