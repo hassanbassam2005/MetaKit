@@ -136,33 +136,91 @@ namespace metakit
             }
         };
 
+        /**
+         * @brief Primary template for converting an index sequence into a tuple using a forward tuple.
+         *
+         * This template is left undefined and is specialized for handling specific index sequences.
+         *
+         * @tparam index The index sequence type (`std::index_sequence`).
+         */
         template <typename index>
         struct make_tuple_from_fwd_tuple;
 
+        /**
+         * @brief Specialization for constructing a tuple from a forwarded tuple using an index sequence.
+         *
+         * Extracts elements from the forwarded tuple (`fwd_tuple`) at the specified indices and constructs a new tuple.
+         *
+         * @tparam indices The index sequence for selecting elements from the forwarded tuple.
+         */
         template <size_t... indices>
         struct make_tuple_from_fwd_tuple<std::index_sequence<indices...>> {
+            /**
+             * @brief Constructs a new tuple by extracting elements at the specified indices from the forwarded tuple.
+             *
+             * @tparam fwd_tuple The forwarded tuple type.
+             * @param fwd The forwarded tuple instance.
+             * @return A new `tuple` containing the extracted elements.
+             */
             template <typename fwd_tuple>
             static constexpr auto f(fwd_tuple&& fwd) {
                 return tuple{ get<indices>(forward<fwd_tuple>(fwd))... };
             }
         };
 
+        /**
+         * @brief Constructs a tuple from perfectly forwarded arguments.
+         *
+         * Each argument is stored as an rvalue reference in the tuple, preserving its forwarding status.
+         *
+         * @tparam T The types of the arguments.
+         * @param args The arguments to be forwarded into the tuple.
+         * @return A tuple containing rvalue references to the arguments.
+         */
         template<typename ...T>
         static constexpr tuple<T&&...> forward_as_tuple(T&&... args)
         {
             return tuple<T&&...>(forward<T>(args)...);
         };
 
+        /**
+         * @brief Primary template for concatenating two tuples while preserving forwarding.
+         *
+         * This template is left undefined and is specialized for handling specific index sequences.
+         *
+         * @tparam FWD_INDEX_SEQ The index sequence for elements from the forwarded tuple.
+         * @tparam TUPLE_INDEX_SEQ The index sequence for elements from the existing tuple.
+         */
         template <typename FWD_INDEX_SEQ, typename TUPLE_INDEX_SEQ>
         struct concat_with_fwd_tuple;
 
+        /**
+         * @brief Specialization for merging two tuples while preserving forwarding.
+         *
+         * Constructs a new tuple by extracting elements from a forwarded tuple (`fwd_tuple`) and an existing tuple (`Tuple`).
+         * The forwarding ensures perfect preservation of value categories.
+         *
+         * @tparam fwd_indices The index sequence for selecting elements from the forwarded tuple.
+         * @tparam indices The index sequence for selecting elements from the existing tuple.
+         */
         template <size_t... fwd_indices, size_t... indices>
         struct concat_with_fwd_tuple<std::index_sequence<fwd_indices...>, std::index_sequence<indices...>> {
+            /**
+             * @brief Combines a forwarded tuple and another tuple into a single tuple while preserving forwarding.
+             *
+             * @tparam fwd_tuple The type of the forwarded tuple.
+             * @tparam Tuple The type of the existing tuple.
+             * @param fwd The forwarded tuple.
+             * @param t The existing tuple.
+             * @return A new tuple containing elements from both input tuples.
+             */
             template <typename fwd_tuple, typename Tuple>
             static constexpr auto f(fwd_tuple&& fwd, Tuple&& t) {
-                return forward_as_tuple(get<fwd_indices>(forward<fwd_tuple>(fwd))..., get<indices>(forward<Tuple>(t))...);
+                return forward_as_tuple(get<fwd_indices>(forward<fwd_tuple>(fwd))...,
+                    get<indices>(forward<Tuple>(t))...);
             }
         };
+
 
         /**
          * @brief Helper struct to concatenate multiple tuples.
@@ -188,7 +246,8 @@ namespace metakit
             {
                 return f(concat_with_fwd_tuple<
                     std::make_index_sequence<tuple_size_v<remove_cvrf_t<rest_tuple>>>,
-                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple>>>>::f(forward<rest_tuple>(rest), forward<Tuple>(t)),
+                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple>>>>::f(forward<rest_tuple>(rest),
+                                                                                     forward<Tuple>(t)),
                     forward<Tuples>(ts)...);
             }
 

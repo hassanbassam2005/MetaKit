@@ -382,7 +382,7 @@ namespace metakit
      * appropriate type. It is used for perfectly forwarding rvalues.
      *
      * @tparam T The type of the argument.
-     * @param args The rvalue to forward.
+     * @param args The rvalue to forward.   
      * @return The forwarded rvalue as an rvalue reference.
      */
     template<typename T>
