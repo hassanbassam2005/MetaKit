@@ -193,7 +193,7 @@ namespace metakit
             }
 
             template<typename fwd_tuple>
-            static constexpr auto f(fwd_tuple&& rest)
+            static constexpr auto f(fwd_tuple && rest)
             {
                 return make_tuple_from_fwd_tuple<std::make_index_sequence<tuple_size_v<fwd_tuple>>>::f(forward<fwd_tuple>(rest));
             }
@@ -230,6 +230,55 @@ namespace metakit
     {
         return detail::tuple_cat_impl::f(forward<Tuple>(tuples)...);
     }
+
+    /**
+     * @brief Primary template for retrieving the type of an element in a tuple at a given index.
+     *
+     * This template is left undefined and is specialized for handling specific tuple cases.
+     *
+     * @tparam i The index of the element to retrieve.
+     * @tparam Tuple The tuple type being accessed.
+     */
+    template<size_t i, typename Tuple>
+    struct tuple_element;
+
+    /**
+     * @brief Specialization for retrieving the first element (index 0) of the tuple.
+     *
+     * Extracts the first element type (`Head`) from the tuple.
+     *
+     * @tparam Head The type of the first element in the tuple.
+     * @tparam Tail... The remaining element types in the tuple.
+     */
+    template<typename Head, typename ...Tail>
+    struct tuple_element<0, tuple<Head, Tail...>>
+    {
+        using type = Head; ///< The type of the first element in the tuple.
+    };
+
+    /**
+     * @brief Specialization for retrieving the `i`-th element of the tuple.
+     *
+     * Recursively accesses the `i-1` index of the remaining tuple elements.
+     *
+     * @tparam i The index of the element to retrieve.
+     * @tparam Head The first element type in the tuple.
+     * @tparam Tail... The remaining element types in the tuple.
+     */
+    template<size_t i, typename Head, typename ...Tail>
+    struct tuple_element<i, tuple<Head, Tail...>>
+    {
+        using type = typename tuple_element<i - 1, tuple<Tail...>>::type; ///< The type of the `i`-th element.
+    };
+
+    /**
+     * @brief Alias template for simplifying access to the `type` member of `tuple_element`.
+     *
+     * @tparam i The index of the element.
+     * @tparam Tuple The tuple type being accessed.
+     */
+    template<size_t i, typename Tuple>
+    using tuple_element_t = typename tuple_element<i, Tuple>::type;
 
 }
 

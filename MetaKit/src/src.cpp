@@ -15,7 +15,7 @@ int main()
 	tuple tot{ 3,true};
 	tuple tot2{ 2.4,"saas"};
 	tuple tot3{ 3,6 };
-	auto t_t = tuple_cat(tot, tot2,tot3);
+	tuple t_t = tuple_cat(tot, tot2,tot3);
 	const tuple tupa{ 1.3,"hi" };
 	using l1 = type_list<int, float, bool>;
 	using l2 = push_back_t<l1, std::string>;
@@ -30,6 +30,7 @@ int main()
 	std::cout << get<1>(tot)<<"\n";
 	std::cout << get<1>(tupa)<<"\n";
 	std::cout << get<4>(t_t) << "\n";
+	std::cout << is_same_v<tuple_element_t<2, decltype(t_t)>, tuple_element_t<1,decltype(tot3)>> << "\n";
 	return 0;
 }
 
