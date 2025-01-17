@@ -409,7 +409,7 @@ namespace metakit
      * the predefined integral types such as bool, char, int, long, etc.
      */
     template<typename T>
-    constexpr bool is_integral_v = is_any_of<T, bool, char, signed char, unsigned char, wchar_t, char8_t,
+    constexpr bool is_integral_v = is_any_of<remove_cvrf_t<T>, bool, char, signed char, unsigned char, wchar_t, char8_t,
         char16_t, char32_t, short, unsigned short, int, unsigned int,
         long, unsigned long, long long, unsigned long long>;
 
@@ -433,11 +433,11 @@ namespace metakit
      * @tparam T The integral type of the values in the sequence.
     * @tparam Ts The values of the sequence.
     */
-    template<typename T, T ...Ts>
-        requires is_integral_v<T>  ///< Ensures that T is an integral type (e.g., int, char, etc.)
+    template<typename T, T... Ts>  
+    requires(is_integral_v<T>)///< Ensures that T is an integral type (e.g., int, char, etc.)
     struct integer_sequence
     {
-        using value = T; ///< The type of the sequence elements (must be integral).
+        using value_type = T; ///< The type of the sequence elements (must be integral).
 
         /**
          * @brief Retrieves the size of the sequence.
@@ -448,8 +448,17 @@ namespace metakit
         {
             return sizeof...(Ts);  ///< Returns the number of arguments (elements) in the parameter pack `Ts`.
         }
-    };
+    }; 
+ 
 
+    template<typename T, T Size>
+    using make_integer_sequence = __make_integer_seq<std::integer_sequence,T, Size>;
+
+    template <size_t N>
+    using make_index_sequence = make_integer_sequence<size_t, N>;
+
+    template <size_t... Ts>
+    using index_sequence = std::integer_sequence<size_t, Ts...>;
 }
 
 #endif

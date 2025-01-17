@@ -204,7 +204,7 @@ namespace metakit
          * @tparam indices The index sequence for selecting elements from the existing tuple.
          */
         template <size_t... fwd_indices, size_t... indices>
-        struct concat_with_fwd_tuple<std::index_sequence<fwd_indices...>, std::index_sequence<indices...>> {
+        struct concat_with_fwd_tuple<index_sequence<fwd_indices...>, index_sequence<indices...>> {
             /**
              * @brief Combines a forwarded tuple and another tuple into a single tuple while preserving forwarding.
              *
@@ -245,8 +245,8 @@ namespace metakit
             static constexpr auto f(rest_tuple&& rest,Tuple&& t,Tuples&&... ts)
             {
                 return f(concat_with_fwd_tuple<
-                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<rest_tuple>>>,
-                    std::make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple>>>>::f(forward<rest_tuple>(rest),
+                    make_index_sequence<tuple_size_v<remove_cvrf_t<rest_tuple>>>,
+                    make_index_sequence<tuple_size_v<remove_cvrf_t<Tuple>>>>::f(forward<rest_tuple>(rest),
                                                                                      forward<Tuple>(t)),
                     forward<Tuples>(ts)...);
             }
@@ -254,7 +254,7 @@ namespace metakit
             template<typename fwd_tuple>
             static constexpr auto f(fwd_tuple && rest)
             {
-                return make_tuple_from_fwd_tuple<std::make_index_sequence<tuple_size_v<fwd_tuple>>>::f(forward<fwd_tuple>(rest));
+                return make_tuple_from_fwd_tuple<make_index_sequence<tuple_size_v<fwd_tuple>>>::f(forward<fwd_tuple>(rest));
             }
 
         };

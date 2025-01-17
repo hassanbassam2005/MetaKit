@@ -31,8 +31,6 @@ int main()
 	std::cout << get<1>(tupa)<<"\n";
 	std::cout << get<4>(t_t) << "\n";
 	std::cout << is_same_v<tuple_element_t<2, decltype(t_t)>, tuple_element_t<1,decltype(tot3)>> << "\n";
-	bool truthy = is_integral_v<int>;
-	std::cout << truthy << "\n";
 	return 0;
 }
 

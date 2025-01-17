@@ -197,9 +197,9 @@ namespace metakit
     template <template <typename> class Pred, typename list>
     static constexpr bool any_v = any<Pred, list>::value;
 
-    static_assert(any_v<std::is_integral, type_list<int, double, std::string>>);
-    static_assert(any_v<std::is_integral, type_list<std::string, double, int>>);
-    static_assert(!any_v<std::is_integral, type_list<std::string, double, float>>);
+    static_assert(any_v<is_integral, type_list<int, double, std::string>>);
+    static_assert(any_v<is_integral, type_list<std::string, double, int>>);
+    static_assert(!any_v<is_integral, type_list<std::string, double, float>>);
 
     /**
      * @brief Predicate to check if types are the same.
