@@ -256,8 +256,15 @@ namespace metakit
             {
                 return make_tuple_from_fwd_tuple<make_index_sequence<tuple_size_v<fwd_tuple>>>::f(forward<fwd_tuple>(rest));
             }
-
         };
+
+
+        template<typename Tup, typename Func, size_t ...indecise>
+        constexpr auto transform_impl(Tup&& tup, Func&& func, index_sequence<indecise...>)
+        {
+            return tuple{ f(get<indecise>(forward<Tup>(tup)))... };
+        }
+
     }//end of namespace detail
 
     /**
@@ -289,6 +296,24 @@ namespace metakit
     {
         return detail::tuple_cat_impl::f(forward<Tuple>(tuples)...);
     }
+
+
+    /**
+     * @brief Applies a transformation function to each element of a tuple.
+     *
+     * @tparam Tup The type of the input tuple.
+     * @tparam Func The type of the transformation function.
+     * @param tup The input tuple to be transformed.
+     * @param func The function to apply to each element of the tuple.
+     * @return A new tuple with transformed elements.
+     */
+    template<typename Tup, typename Func>
+    constexpr auto transform(Tup&& tup, const Func&& func)
+    {
+        return detail::transform_impl(forward<Tup>(tup), func,
+            make_index_sequence<detail::tuple_size_v<remove_cvrf_t<Tup>>>{});
+    }
+
 
     /**
      * @brief Primary template for retrieving the type of an element in a tuple at a given index.
@@ -338,6 +363,7 @@ namespace metakit
      */
     template<size_t i, typename Tuple>
     using tuple_element_t = typename tuple_element<i, Tuple>::type;
+
 
 }
 
