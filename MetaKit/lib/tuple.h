@@ -258,6 +258,11 @@ namespace metakit
             }
         };
 
+        template<typename Tup, size_t...indecise>
+        constexpr auto cat_tuple_content(Tup&& T, index_sequence<indecise...>)
+        {
+            return tuple_cat(get<indecise>(forward<Tup>(T))...);
+        }   
 
         /**
          * @brief Applies a transformation function to each element of a tuple (implementation).
@@ -319,30 +324,54 @@ namespace metakit
      * @return A new tuple with transformed elements.
      */
     template<typename Tup, typename Func>
-    constexpr auto transform(Tup&& tup, const Func&& func)
+    constexpr auto transform(Tup&& tup, const Func& func)
     {
         return detail::transform_impl(forward<Tup>(tup), func,
             make_index_sequence<detail::tuple_size_v<remove_cvrf_t<Tup>>>{});
     }
     
-    template<template<typename ...> class Pred,typename Tup>
+    /**
+     * @brief Filters elements of a tuple based on a predicate.
+     *
+     * @tparam Pred A template predicate that determines which elements to keep.
+     * @tparam Tup The type of the input tuple.
+     * @param t The input tuple to be filtered.
+     * @return A new tuple containing only the elements that satisfy the predicate.
+     */
+    template<template<typename ...> class Pred, typename Tup>
     constexpr auto filter(Tup&& t)
     {
+        /**
+         * @brief Wraps an element in a tuple if it matches the predicate.
+         *
+         * @tparam Elem The type of the current element.
+         * @param e The element to be checked and potentially wrapped.
+         * @return A single-element tuple if the predicate matches, otherwise an empty tuple.
+         */
         auto wrap_if_pred_matches = [&]<typename Elem>(Elem && e)
         {
             if constexpr (Pred<remove_cvrf_t<Elem>>::value)
             {
-                return tuple(forward<Elem>(e));
+                return forward_as_tuple(forward<Elem>(e));
             }
             else
             {
                 return tuple<>{};
             }
         };
-        auto wrap_tuple = transform( forward<Tup>(t), wrap_if_pred_matches);
 
-        return detail::cat_tuple_content(std::move(wrapped_tup), make_index_sequence < tuple_size_v<remove_cvrf_t<Tup>>>{});
+        // Apply the wrapping function to each element in the tuple.
+        auto wrapped_tuple = transform(forward<Tup>(t), wrap_if_pred_matches);
+
+        /**
+         * @brief Concatenates the wrapped tuples into a single tuple, removing empty ones.
+         *
+         * @return A filtered tuple containing only the elements that satisfy the predicate.
+         */
+        return detail::cat_tuple_content(move(wrapped_tuple),
+            make_index_sequence<detail::tuple_size_v<remove_cvrf_t<Tup>>>{});
     }
+
 
     /**
      * @brief Primary template for retrieving the type of an element in a tuple at a given index.

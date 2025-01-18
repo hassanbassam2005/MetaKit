@@ -392,6 +392,11 @@ namespace metakit
         return static_cast<T&&>(args);
     }
 
+    template<typename T>
+    constexpr remove_refernce_t<T>&& move(T&& args)
+    {
+        return static_cast<remove_refernce_t<T>&&>(args);
+    }
 
     /**
      * @brief Checks if a type T is equal to any of the types in Ts.

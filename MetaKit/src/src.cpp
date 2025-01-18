@@ -28,9 +28,11 @@ int main()
 	std::cout << is_same_v<front_t<decltype(list)>, front_t<decltype(tupe)>> << "\n";
 	std::cout << tupe.data << "\n";
 	std::cout << get<1>(tot)<<"\n";
-	std::cout << get<1>(tupa)<<"\n";
+	std::cout << get<1>(tupa) << "\n";
 	std::cout << get<4>(t_t) << "\n";
 	std::cout << is_same_v<tuple_element_t<2, decltype(t_t)>, tuple_element_t<1,decltype(tot3)>> << "\n";
+	auto filterd = filter<std::is_reference>(forward<decltype(t_t)>(t_t));
+	std::cout << is_same_v<decltype(filterd), decltype(t_t)>;
 	return 0;
 }
 
