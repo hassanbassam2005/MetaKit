@@ -449,8 +449,7 @@ namespace metakit
     requires(is_integral_v<T>)///< Ensures that T is an integral type (e.g., int, char, etc.)
     struct integer_sequence
     {
-
-        using value_type = T; ///< The type of the sequence elements (must be integral).
+        using type = T; ///< The type of the sequence elements (must be integral).
 
         /**
          * @brief Retrieves the size of the sequence.
@@ -464,7 +463,7 @@ namespace metakit
     };
 
     template<typename T, T Size>
-    using make_integer_sequence = __make_integer_seq<integer_sequence,T, Size>;
+    using make_integer_sequence = __make_integer_seq<std::integer_sequence,T, Size>;
 
     template <size_t N>
     using make_index_sequence = make_integer_sequence<size_t, N>;
