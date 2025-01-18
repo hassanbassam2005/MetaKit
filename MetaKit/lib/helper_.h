@@ -423,7 +423,6 @@ namespace metakit
     template<typename T>
     struct is_integral : bool_constant<is_integral_v<T>> {};
 
-
     /**
     * @brief A structure to represent a sequence of integral values as a compile-time type.
     *
@@ -433,10 +432,11 @@ namespace metakit
      * @tparam T The integral type of the values in the sequence.
     * @tparam Ts The values of the sequence.
     */
-    template<typename T, T... Ts>  
+    template<typename T,T...Ts>  
     requires(is_integral_v<T>)///< Ensures that T is an integral type (e.g., int, char, etc.)
     struct integer_sequence
     {
+
         using value_type = T; ///< The type of the sequence elements (must be integral).
 
         /**
@@ -448,8 +448,7 @@ namespace metakit
         {
             return sizeof...(Ts);  ///< Returns the number of arguments (elements) in the parameter pack `Ts`.
         }
-    }; 
- 
+    };
 
     template<typename T, T Size>
     using make_integer_sequence = __make_integer_seq<std::integer_sequence,T, Size>;
