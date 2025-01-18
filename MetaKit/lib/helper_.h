@@ -392,11 +392,19 @@ namespace metakit
         return static_cast<T&&>(args);
     }
 
+    /**
+     * @brief Moves an object to an rvalue reference, enabling efficient transfer of ownership.
+     *
+     * @tparam T The type of the object to be moved.
+     * @param args The object to be moved.
+     * @return An rvalue reference to the object, enabling ownership transfer.
+     */
     template<typename T>
     constexpr remove_refernce_t<T>&& move(T&& args)
     {
         return static_cast<remove_refernce_t<T>&&>(args);
     }
+
 
     /**
      * @brief Checks if a type T is equal to any of the types in Ts.
@@ -456,7 +464,7 @@ namespace metakit
     };
 
     template<typename T, T Size>
-    using make_integer_sequence = __make_integer_seq<std::integer_sequence,T, Size>;
+    using make_integer_sequence = __make_integer_seq<integer_sequence,T, Size>;
 
     template <size_t N>
     using make_index_sequence = make_integer_sequence<size_t, N>;
