@@ -259,11 +259,22 @@ namespace metakit
         };
 
 
+        /**
+         * @brief Applies a transformation function to each element of a tuple (implementation).
+         *
+         * @tparam Tup The type of the input tuple.
+         * @tparam Func The type of the transformation function.
+         * @tparam indecise Index sequence representing tuple element positions.
+         * @param tup The input tuple to be transformed.
+         * @param func The function to apply to each element of the tuple.
+         * @return A new tuple with transformed elements.
+         */
         template<typename Tup, typename Func, size_t ...indecise>
         constexpr auto transform_impl(Tup&& tup, Func&& func, index_sequence<indecise...>)
         {
-            return tuple{ f(get<indecise>(forward<Tup>(tup)))... };
+            return tuple{ func(get<indecise>(forward<Tup>(tup)))... };
         }
+
 
     }//end of namespace detail
 
@@ -313,7 +324,25 @@ namespace metakit
         return detail::transform_impl(forward<Tup>(tup), func,
             make_index_sequence<detail::tuple_size_v<remove_cvrf_t<Tup>>>{});
     }
+    
+    template<template<typename ...> class Pred,typename Tup>
+    constexpr auto filter(Tup&& t)
+    {
+        auto wrap_if_pred_matches = [&]<typename Elem>(Elem && e)
+        {
+            if constexpr (Pred<remove_cvrf_t<Elem>>::value)
+            {
+                return tuple(forward<Elem>(e));
+            }
+            else
+            {
+                return tuple<>{};
+            }
+        };
+        auto wrap_tuple = transform( forward<Tup>(t), wrap_if_pred_matches);
 
+        return detail::cat_tuple_content(std::move(wrapped_tup), make_index_sequence < tuple_size_v<remove_cvrf_t<Tup>>>{});
+    }
 
     /**
      * @brief Primary template for retrieving the type of an element in a tuple at a given index.
