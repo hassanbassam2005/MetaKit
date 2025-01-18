@@ -27,12 +27,12 @@ git clone https://github.com/hassanbassam2005/MetaKit.git
 Then include it in your project:
 
 ```cpp
-#include "metakit/type_list.hpp"
+#include "metakit/type_list.h"
 ```
 
 ## 📌 Usage Example
 ```cpp
-#include "metakit/type_list.hpp"
+#include "metakit/type_list.h"
 #include <iostream>
 
 using namespace metakit;
