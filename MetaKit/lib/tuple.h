@@ -258,11 +258,21 @@ namespace metakit
             }
         };
 
-        template<typename Tup, size_t...indecise>
+
+        /**
+         * @brief Concatenates the contents of a tuple, flattening nested tuples.
+         *
+         * @tparam Tup The type of the input tuple containing potentially nested tuples.
+         * @tparam indecise Index sequence representing tuple element positions.
+         * @param T The input tuple whose elements will be concatenated.
+         * @return A flattened tuple containing all elements from nested tuples.
+         */
+        template<typename Tup, size_t... indecise>
         constexpr auto cat_tuple_content(Tup&& T, index_sequence<indecise...>)
         {
             return tuple_cat(get<indecise>(forward<Tup>(T))...);
-        }   
+        }
+
 
         /**
          * @brief Applies a transformation function to each element of a tuple (implementation).
