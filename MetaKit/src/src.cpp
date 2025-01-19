@@ -1,7 +1,28 @@
-#include "test.cpp"
+#include "testCopying.cpp"
+#include <tuple>
+
+using namespace metakit;
+using namespace test;
 
 int main()
 {
+	auto tup = make_tuple(1,2.4,"hassan");
+	std::cout << get<2>(tup) << '\n';
+
+	const tuple const_tup{ 1, false, 4 };
+	std::cout << get<2>(const_tup) << '\n';
+
+
+	std::cout << get<2>(tuple{ 2, 3, 8 }) << '\n';
+	get<1>(tup) = 4.2;
+	std::cout << get<2>(tup) << '\n';
+	
+	CopyCounter c;
+	CopyStats M_stat = c.stats;
+
+
+	std::cout << "metakit::make_tuple stats: " <<M_stat << '\n';
+
 	return 0;
 }
 
