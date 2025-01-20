@@ -102,7 +102,7 @@ namespace test
 }  // namespace test
 
 /* @brief This namespace contains a small testing framework to keep dependencies low. */
-namespace Test::testing {
+namespace test::testing {
 
 	/* @brief Exception thrown when an assertion fails. */
 	struct AssertFailed : std::runtime_error {
