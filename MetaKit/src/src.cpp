@@ -23,6 +23,21 @@ int main()
 
 	std::cout << "metakit::make_tuple stats: " <<M_stat << '\n';
 	
+	CopyCounter::reset();
+
+	tuple tup3{ 1,c,3,"hassan" };
+	tuple tup4{ 3.4,"basssam" };
+
+	auto to = tuple_cat(tup3, tup4);
+
+	std::cout << "metakit::tuple_cat stats: " << c.stats << '\n';
+	CopyCounter::reset();
+
+	auto to2 = std::tuple_cat(std::tuple{ 1, c, 3, "hassan" }, std::tuple{ 3.4,"basssam" });
+
+	std::cout << "std::tuple_cat stats: " << c.stats << '\n';
+	CopyCounter::reset();
+
 	return 0;
 }
 

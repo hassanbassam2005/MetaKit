@@ -400,7 +400,7 @@ namespace metakit
      * @return An rvalue reference to the object, enabling ownership transfer.
      */
     template<typename T>
-    constexpr remove_refernce_t<T>&& move(T&& args)
+    constexpr remove_refernce_t<T>&& move(T&& args) noexcept
     {
         return static_cast<remove_refernce_t<T>&&>(args);
     }
@@ -436,7 +436,7 @@ namespace metakit
     template<typename T>
     struct is_integral : bool_constant<is_integral_v<T>> {};
 
-    /**
+    /** 
     * @brief A structure to represent a sequence of integral values as a compile-time type.
     *
     * This template represents a sequence of integral values (of type `T`) and provides a utility to retrieve
@@ -462,14 +462,15 @@ namespace metakit
         }
     };
 
+
     template<typename T, T Size>
-    using make_integer_sequence = __make_integer_seq<std::integer_sequence,T, Size>;
+    using make_integer_sequence = __make_integer_seq<integer_sequence,T, Size>;
 
     template <size_t N>
     using make_index_sequence = make_integer_sequence<size_t, N>;
 
     template <size_t... Ts>
-    using index_sequence = std::integer_sequence<size_t, Ts...>;
+    using index_sequence = integer_sequence<size_t, Ts...>;
 }
 
 #endif
