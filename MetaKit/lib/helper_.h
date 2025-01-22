@@ -463,12 +463,28 @@ namespace metakit
     };
 
 
+	/**
+	 * @brief Alias template for creating an integer sequence.
+	 *
+	 * @tparam T The integral type of the sequence.
+	 * @tparam Ts The values in the sequence.
+	 */
     template<typename T, T Size>
     using make_integer_sequence = __make_integer_seq<integer_sequence,T, Size>;
 
+	/**
+	 * @brief Alias template for creating an integer sequence.
+	 *
+	 * @tparam N The number of elements in the sequence.
+	 */
     template <size_t N>
     using make_index_sequence = make_integer_sequence<size_t, N>;
 
+    /**
+     * @brief Represents an index sequence of size_t values.
+     *
+     * @tparam Ts The values in the index sequence.
+     */
     template <size_t... Ts>
     using index_sequence = integer_sequence<size_t, Ts...>;
 }

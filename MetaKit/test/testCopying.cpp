@@ -3,9 +3,11 @@
 #include <array>
 #include <tuple>
 #include <vector>
+#include <sstream>
 
 #include "tuple.h"
 #include "type_list.h"
+#include "helper_.h"
 
 using namespace metakit;
 
@@ -86,7 +88,7 @@ namespace test
 	}
 
 	namespace detail {
-		static constexpr size_t default_copycounter_index = 425464;  // Random number to avoid index collisions.
+		static constexpr size_t default_copycounter_index = 754488;  // Random number to avoid index collisions.
 	}  // namespace detail
 
 	/* @brief Alias for the default IndexedCopyCounter. */
@@ -97,7 +99,7 @@ namespace test
 	template <size_t index = detail::default_copycounter_index>
 	IndexedCopyCounter<index> make_copy_counter() {
 		return IndexedCopyCounter<index>{IndexedCopyCounter<index>::reset_after_construct};
-	}
+	}	
 
 }  // namespace test
 
@@ -114,7 +116,7 @@ namespace test::testing {
 			: std::runtime_error("assert failed")
 			, file(file_path)
 			, line_nr(line)
-			, expression(std::move(assert_expression)) {}
+			, expression(metakit::move(assert_expression)) {}
 		std::string_view file; ///< File where the assertion failed.
 		size_t line_nr;        ///< Line number where the assertion failed.
 		std::string expression; ///< The assertion expression that failed.
@@ -133,9 +135,9 @@ namespace test::testing {
 			std::string assert_expression,
 			std::string value_string1,
 			std::string value_string2)
-			: AssertFailed(file_path, line, std::move(assert_expression))
-			, value1(std::move(value_string1))
-			, value2(std::move(value_string2)) {}
+			: AssertFailed(file_path, line, metakit::move(assert_expression))
+			, value1(metakit::move(value_string1))
+			, value2(metakit::move(value_string2)) {}
 		std::string value1; ///< The string representation of the first value.
 		std::string value2; ///< The string representation of the second value.
 	};
@@ -144,7 +146,7 @@ namespace test::testing {
 	   @param expr The expression to evaluate. */
 #define ASSERT(expr)                                                                                    \
 	if (!(expr)) {                                                                                        \
-		throw ::Test::testing::AssertFailed{__FILE__, __LINE__, std::string{"ASSERT("} + #expr + ")"}; \
+		throw test::testing::AssertEqFailed{__FILE__, __LINE__, std::string{"ASSERT("} + #expr + ")"}; \
 	}
 
 	   /* @brief Macro to assert that two values are equal.
@@ -156,7 +158,7 @@ namespace test::testing {
 		std::stringstream ss2;                                                                               \
 		ss1 << (expr1);                                                                                      \
 		ss2 << (expr2);                                                                                      \
-		throw ::Test::testing::AssertEqFailed{__FILE__,                                                 \
+		throw test::testing::AssertEqFailed{__FILE__,                                                 \
 		                                           __LINE__,                                                 \
 		                                           std::string{"ASSERT_EQ("} + #expr1 + ", " + #expr2 + ")", \
 		                                           ss1.str(),                                                \
@@ -299,7 +301,7 @@ namespace test::testing {
 		   @param arg_indices The indices of the arguments.
 		   @param function The test function to execute. */
 		template <size_t config, size_t... arg_indices, typename FUNC>
-		static void execute_for_config(std::index_sequence<arg_indices...>, FUNC&& function) {
+		static void execute_for_config(index_sequence<arg_indices...>, FUNC&& function) {
 			function(Builder<compute_arg_config<config, arg_indices>()...>{});
 		}
 
@@ -320,7 +322,7 @@ namespace test::testing {
 		   @param arg_indices The indices of the arguments.
 		   @return The string representation of the configuration. */
 		template <size_t config, size_t... arg_indices>
-		static std::string get_config_str(std::index_sequence<arg_indices...>) {
+		static std::string get_config_str(index_sequence<arg_indices...>) {
 			return "| " + ((std::string{ config_to_string(compute_arg_config<config, arg_indices>()) } + " | ") + ...);
 		}
 	};
