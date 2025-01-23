@@ -1,9 +1,12 @@
-#include <iostream>
-#include <assert.h>
 #include <array>
-#include <tuple>
-#include <vector>
+#include <exception>
+#include <iostream>
+#include <memory>
 #include <sstream>
+#include <type_traits>
+#include <utility>
+#include <vector>
+#include <vector>
 
 #include "tuple.h"
 #include "type_list.h"
@@ -88,7 +91,7 @@ namespace test
 	}
 
 	namespace detail {
-		static constexpr size_t default_copycounter_index = 754488;  // Random number to avoid index collisions.
+		static constexpr size_t default_copycounter_index = 68474;  // Random number to avoid index collisions.
 	}  // namespace detail
 
 	/* @brief Alias for the default IndexedCopyCounter. */
@@ -159,7 +162,7 @@ namespace test::testing {
 		ss1 << (expr1);                                                                                      \
 		ss2 << (expr2);                                                                                      \
 		throw test::testing::AssertEqFailed{__FILE__,                                                 \
-		                                           __LINE__,                                                 \
+		                                          size_t(__LINE__),                                                 \
 		                                           std::string{"ASSERT_EQ("} + #expr1 + ", " + #expr2 + ")", \
 		                                           ss1.str(),                                                \
 		                                           ss2.str()};                                               \
@@ -227,14 +230,14 @@ namespace test::testing {
 		/* @brief Prints the start of a test.
 		   @param test_name The name of the test being run. */
 		static void print_test_start(std::string_view test_name) {
-			std::cerr << color_green << "[ RUN      ] " << color_reset << test_name << "\n";
+			std::cerr << color_green << "[  RUN  ] " << color_reset << test_name << "\n";
 		}
 		/* @brief Prints the end of a test.
 		   @param test_name The name of the test that has finished.
 		   @param passed Indicates whether the test passed or failed. */
 		static void print_test_end(std::string_view test_name, bool passed) {
 			if (passed) {
-				std::cerr << color_green << "[       OK ] " << color_reset << test_name << "\n";
+				std::cerr << color_green << "[  OK  ] " << color_reset << test_name << "\n";
 			}
 			else {
 				std::cerr << color_red << "[  FAILED  ] " << color_reset << test_name << "\n";

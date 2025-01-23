@@ -15,9 +15,9 @@ int main()
 			auto c2 = make_copy_counter<std_tuple>();
 
 			tuple t1 {1, c1, 4};
-			std::tuple t2{ 1, c2, 4 };
+			std::tuple t2 { 1, c2, 4 };
 	
-			ASSERT_EQ(c1, c2);	
+			ASSERT_EQ(c1, c2 );
 		});
 
 	return 0;
