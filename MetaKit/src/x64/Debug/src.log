@@ -1,3 +1,13 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (test.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   src.cpp
-  src.vcxproj -> C:\Users\think\MetaKit\MetaKit\x64\Debug\src.exe
+C:\Users\think\MetaKit\MetaKit\test\testCopying.cpp(274,14): error C2039: 'static_for': is not a member of 'metakit'
+  (compiling source file 'src.cpp')
+      C:\Users\think\Documents\GitHub\MetaKit\MetaKit\lib\tuple.h(8,11):
+      see declaration of 'metakit'
+      C:\Users\think\MetaKit\MetaKit\test\testCopying.cpp(270,15):
+      This diagnostic occurred in the compiler generated function 'void test::testing::TesterWithBuilder<n_args>::test(std::string_view,FUNC &&)'
+      C:\Users\think\MetaKit\MetaKit\test\testCopying.cpp(274,14):
+      the template instantiation context (the oldest one first) is
+          C:\Users\think\MetaKit\MetaKit\test\testCopying.cpp(264,8):
+          while compiling class template 'test::testing::TesterWithBuilder'
+  

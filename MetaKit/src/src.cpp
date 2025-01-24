@@ -42,7 +42,17 @@ int main()
 
             ASSERT_EQ(c1, c2); ///< Validates that the copy/move characteristics match.
         });
+        
+    testing::TesterWithBuilder<1>::test("tuple_cat",[]()
+        {
+            auto c1 = make_copy_counter<metakit_tuple>(); ///< Creates a copy counter for metakit_tuple.
+            auto c2 = make_copy_counter<std_tuple>(); ///< Creates a copy counter for std_tuple.
 
+            tuple t1 = tuple_cat(tuple{ 3,c1,4 }, tuple{ 3.5,c1,"hassan" });
+            std::tuple t2 = std::tuple_cat(std::tuple{ 3,c2,4 }, std::tuple{ 3.5,c2,"hassan" });
+
+            ASSERT_EQ(c1, c2);
+        });
 
 
 	return 0;

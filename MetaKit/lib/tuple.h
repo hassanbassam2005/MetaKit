@@ -154,7 +154,7 @@ namespace metakit
          * @tparam indices The index sequence for selecting elements from the forwarded tuple.
          */
         template <size_t... indices>
-        struct make_tuple_from_fwd_tuple<std::index_sequence<indices...>> {
+        struct make_tuple_from_fwd_tuple<index_sequence<indices...>> {
             /**
              * @brief Constructs a new tuple by extracting elements at the specified indices from the forwarded tuple.
              *

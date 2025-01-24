@@ -1,12 +1,11 @@
 #include <array>
 #include <exception>
 #include <iostream>
-#include <memory>
 #include <sstream>
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include <vector>
+
 
 #include "tuple.h"
 #include "type_list.h"
@@ -149,7 +148,7 @@ namespace test::testing {
 	   @param expr The expression to evaluate. */
 #define ASSERT(expr)                                                                                    \
 	if (!(expr)) {                                                                                        \
-		throw test::testing::AssertEqFailed{__FILE__, __LINE__, std::string{"ASSERT("} + #expr + ")"}; \
+		throw test::testing::AssertEqFailed{__FILE__, size_t(__LINE__), std::string{"ASSERT("} + #expr + ")"}; \
 	}
 
 	   /* @brief Macro to assert that two values are equal.
@@ -272,7 +271,7 @@ namespace test::testing {
 			auto test_func = [&]() {
 				static constexpr size_t n_configurations = constexpr_pow(4U, n_args);
 				int failed_configs = 0;
-				static_for<0, n_configurations>([&](auto i) {
+				metakit::static_for<0, n_configurations>([&](auto i) {
 					try {
 						execute_for_config<i.value>(make_index_sequence<n_args>{}, function);
 					}
@@ -286,7 +285,7 @@ namespace test::testing {
 					throw std::runtime_error("Test failed for " + std::to_string(failed_configs) + " configurations");
 				};
 				};
-			Tester::test(test_name, std::move(test_func));
+			Tester::test(test_name, metakit::move(test_func));
 		}
 
 	private:

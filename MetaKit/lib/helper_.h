@@ -487,6 +487,17 @@ namespace metakit
      */
     template <size_t... Ts>
     using index_sequence = integer_sequence<size_t, Ts...>;
+
+
+   template<int First,int Last,typename lambda>
+   constexpr void static_for(const lambda& f)
+   {
+       if constexpr(First<Last)
+       {
+           f(integral_constant<int, First>{});
+           static_for<First + 1, Last>(f);
+       }
+   }
 }
 
 #endif
